@@ -89,7 +89,7 @@ public class MainActivity extends Activity {
                 "URL=$(curl -fsSL https://piston-meta.mojang.com/mc/game/version_manifest_v2.json | " +
                 "jq -r '[.versions[] | select(.id==\"26.3\")][0].url' | " +
                 "xargs -r curl -fsSL | jq -r '.downloads.server.url'); " +
-                "curl -fL \\"$URL\\" -o server.jar; fi; " +
+                "curl -fL \"$URL\" -o server.jar; fi; " +
                 "printf 'eula=true\nserver-port=25565\nmax-players=10\nview-distance=6\nsimulation-distance=4\nonline-mode=%s\n' " +
                 (offline ? "false" : "true") + " > server.properties; " +
                 "echo SETUP_COMPLETE",
