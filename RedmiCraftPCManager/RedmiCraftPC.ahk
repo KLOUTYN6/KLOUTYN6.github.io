@@ -115,8 +115,11 @@ RefreshMain(*) {
     RamText.Text := "RAM: " xmx " GB"
     port := IniRead(ConfigFile, "Network", "Port", "25565")
     AddressText.Text := GetLanIP() ":" port
-    ts := GetTailscaleIP()
-    TailscaleText.Text := ts != "" ? "READY: " ts ":" port : "Not connected"
+    if (A_TickCount - lastTailscaleCheck) >= 5000 {
+        cachedTailscaleIP := GetTailscaleIP()
+        lastTailscaleCheck := A_TickCount
+    }
+    TailscaleText.Text := cachedTailscaleIP != "" ? "READY: " cachedTailscaleIP ":" port : "Not connected"
     PlayerText.Text := "Players: " ParsePlayerCount()
 }
 
