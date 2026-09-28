@@ -1,0 +1,41 @@
+name: Build RedmiCraft PC Manager
+
+on:
+  push:
+    paths:
+      - "RedmiCraftPCManager/**"
+      - ".github/workflows/build-redmicraft-pc.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build AutoHotkey EXE
+        uses: tamo/action-Ahk2Exe@main
+        with:
+          src: RedmiCraftPCManager/RedmiCraftPC.ahk
+          base: AutoHotkey64.exe
+
+      - name: Verify EXE
+        shell: powershell
+        run: |
+          if (-not (Test-Path "RedmiCraftPCManager/RedmiCraftPC.exe")) { throw "EXE was not created" }
+          Get-Item "RedmiCraftPCManager/RedmiCraftPC.exe" | Format-List Name,Length,LastWriteTime
+
+      - name: Package
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          Copy-Item "RedmiCraftPCManager/RedmiCraftPC.exe" "dist/RedmiCraftPC.exe"
+          Copy-Item "RedmiCraftPCManager/README.txt" "dist/README.txt"
+          Compress-Archive -Path "dist/*" -DestinationPath "RedmiCraftPC-Windows.zip" -Force
+
+      - name: Upload EXE package
+        uses: actions/upload-artifact@v4
+        with:
+          name: RedmiCraftPC-Windows
+          path: RedmiCraftPC-Windows.zip
