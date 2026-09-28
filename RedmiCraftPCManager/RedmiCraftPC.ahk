@@ -103,7 +103,7 @@ ResizeMain(guiObj, minMax, width, height) {
 }
 
 RefreshMain(*) {
-    global StatusText, AddressText, RamText, PlayerText, TailscaleText
+    global StatusText, AddressText, RamText, PlayerText, TailscaleText, TailscaleText
     if IsServerRunning() {
         StatusText.Text := "ONLINE"
         StatusText.SetFont("c7CFF6B Bold")
@@ -208,7 +208,7 @@ ChooseJava(ctrl) {
 }
 
 SaveSettings(eFolder, eJava, cbXms, cbXmx, cbGC, ePort, eMaxPlayers, cbDiff, cbMode, eView, eSim, cPvp, cCmd, cCheats, cWhitelist, cOffline, cAuto) {
-    global ServerDir, JavaPath
+    global ServerDir, JavaPath, SettingsGui
     if !IsInteger(ePort.Value) || Integer(ePort.Value) < 1 || Integer(ePort.Value) > 65535 {
         MsgBox "Port must be between 1 and 65535.", "RedmiCraft PC", 48
         return
@@ -552,8 +552,11 @@ ParsePlayerCount() {
 
 IsServerRunning() {
     global ServerProc
-    try return IsObject(ServerProc) && ServerProc.Status = 0
-    catch return false
+    try {
+        return IsObject(ServerProc) && ServerProc.Status = 0
+    } catch {
+        return false
+    }
 }
 
 OpenServerFolder(*) {
@@ -583,9 +586,14 @@ CloseProgram(*) {
         if answer = "Cancel"
             return
         if answer = "Yes" {
-            try ServerProc.StdIn.WriteLine("stop")
+            try {
+                ServerProc.StdIn.WriteLine("stop")
+            }
             Sleep 1200
-            try if IsServerRunning() ProcessClose(ServerProc.ProcessID)
+            try {
+                if IsServerRunning()
+                    ProcessClose(ServerProc.ProcessID)
+            }
         }
     }
     ExitApp()
