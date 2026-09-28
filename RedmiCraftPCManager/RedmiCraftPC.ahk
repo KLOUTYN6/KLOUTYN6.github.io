@@ -575,8 +575,11 @@ OpenTailscale(*) {
 
 AllowFirewall(*) {
     rule := 'netsh advfirewall firewall add rule name="RedmiCraft Minecraft 25565" dir=in action=allow protocol=TCP localport=25565'
-    try Run('*RunAs "' A_ComSpec '" /c ' rule)
-    catch MsgBox "Windows could not start the firewall helper.", "RedmiCraft PC", 16
+    try {
+        Run('*RunAs "' A_ComSpec '" /c ' rule)
+    } catch {
+        MsgBox "Windows could not start the firewall helper.", "RedmiCraft PC", 16
+    }
 }
 
 CloseProgram(*) {
